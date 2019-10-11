@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.forms import formset_factory
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 
 from chiffee.filters import BuyFilter
 from .forms import ProductForm
@@ -141,6 +141,8 @@ def products(request):
 
 def users(request,productID):
 	get_object_or_404(Product, product_name=productID)
+	if request.user.is_authenticated():
+		return redirect('confirm', productID=productID, userID=request.user.username)
 	context = {}
 	context['product'] = productID
 	context['profs'] = Group.objects.get(name="prof").user_set.all().order_by('username')
